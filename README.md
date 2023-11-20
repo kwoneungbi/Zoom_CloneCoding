@@ -1,4 +1,4 @@
-# Noom
+# Boom
 
 Babel, Nodemon, Express을 활용해서 NodeJS 프로젝트 설정하기
 
