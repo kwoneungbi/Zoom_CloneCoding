@@ -7,6 +7,7 @@ import express from "express";
 // ES 모듈로 간주되어 __dirname이 정의되지 않았기 때문에 발생
 import { fileURLToPath } from "url";
 import { dirname } from "path";
+import { stripVTControlCharacters } from "util";
 
 // ES 모듈에서는 __dirname 변수를 사용할 수 없습니다.
 // 대신에 import.meta.url을 사용하여 현재 모듈의 경로를 얻을 수 있습니다.
@@ -31,10 +32,20 @@ const server = http.createServer(app);
 // 같은 서버에서 http, webSocket 둘 다 작동시키기
 const wss = new WebSocketServer({ server });
 
-function handleConnection() {
-  console.log("ok");
+function onSocketClose() {
+  console.log("Disconnected from the Browser❌");
 }
 
-wss.on("connection", handleConnection);
+function onSocketMessage(message) {
+  console.log(message.toString());
+}
+
+wss.on("connection", (socket) => {
+  console.log("Connected to Browser✅");
+  socket.on("close", onSocketClose);
+  // "close"은 브라우저의 탭을 닫거나, 컴퓨터가 잠자기 모드에 들어갈때 실ㅇ
+  socket.on("message", onSocketClose);
+  socket.send("hello!!!");
+});
 
 server.listen(3000, handleListen);
